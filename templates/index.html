@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Maintenance Request System</title>
+    <!-- Tailwind CSS Link -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.15/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="bg-white p-8 rounded shadow-md w-96">
+            <h1 class="text-3xl font-semibold mb-4 text-center">Login</h1>
+            <p class="text-gray-600 text-center mb-6">Please enter your credentials to log in.</p>
+
+            <!-- Display message if the pin is incorrect -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <ul class="list-none">
+                    {% for category, message in messages %}
+                        <li class="text-{{ category }} mb-2">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Login for tenant card -->
+            <form action="{{ url_for('tenant_login') }}" method="post">
+                <div class="mb-4">
+                    <label for="tenant_id" class="block text-sm font-medium text-gray-700">Tenant ID:</label>
+                    <input type="text" class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-opacity-50" id="tenant_id" name="tenant_id" placeholder="Enter Tenant ID" required>
+                </div>
+                <button type="submit" class="w-full py-2 px-4 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-opacity-50">Login</button>
+            </form>
+
+            <!-- Login for staff card -->
+            <form action="{{ url_for('staff_login') }}" method="post">
+                <div class="mb-4">
+                    <label for="staff_pin" class="block text-sm font-medium text-gray-700">Staff Pin:</label>
+                    <input type="password" class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-opacity-50" id="staff_pin" name="staff_pin" placeholder="Enter Staff Pin" required>
+                </div>
+                <button type="submit" class="w-full py-2 px-4 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-opacity-50">Login</button>
+            </form>
+
+            <!-- Login for Manager card -->
+            <form action="{{ url_for('manager_login') }}" method="post">
+                <div class="mb-4">
+                    <label for="manager_pin" class="block text-sm font-medium text-gray-700">Manager Pin:</label>
+                    <input type="password" class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-opacity-50" id="manager_pin" name="manager_pin" placeholder="Enter Manager Pin" required>
+                </div>
+                <button type="submit" class="w-full py-2 px-4 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-opacity-50">Login</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

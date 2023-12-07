@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Tenants</title>
+    <!-- Add Tailwind CSS Link -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.15/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <header>
+        <nav class="bg-blue-500 p-4">
+            <div class="container mx-auto flex items-center justify-between">
+                <div class="text-white font-semibold text-xl">MaintenanceApp</div>
+                <ul class="flex space-x-4">
+                    <li><a href="/" class="text-white hover:text-blue-300">Home</a></li>
+                    <li><a href="/submit-request" class="text-white hover:text-blue-300">Submit Request</a></li>
+                    <li><a href="/view-requests" class="text-white hover:text-blue-300">View Requests</a></li>
+                    <li><a href="/manage-tenants" class="text-white hover:text-blue-300">Manage Tenants</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-8">
+        <div class="mb-8">
+            <h1 class="text-3xl font-semibold">Manage Tenants</h1>
+        </div>
+
+        <!-- Tenant Form -->
+        <div class="tenant-form-container bg-white p-6 rounded-md shadow-md mb-8">
+            <form action="{{ url_for('add_tenant') }}" method="post" class="tenant-form space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="tenant_id" class="block text-sm font-medium text-gray-700">Tenant ID:</label>
+                        <input type="text" id="tenant_id" name="tenant_id" placeholder="Tenant ID" required class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-opacity-50">
+                    </div>
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700">Name:</label>
+                        <input type="text" id="name" name="name" placeholder="Full Name" required class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-opacity-50">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="phone_number" class="block text-sm font-medium text-gray-700">Phone Number:</label>
+                    <input type="tel" id="phone_number" name="phone_number" placeholder="Phone Number" required class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-opacity-50">
+                </div>
+                <div class="form-group">
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email:</label>
+                    <input type="email" id="email" name="email" placeholder="Email Address" required class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-opacity-50">
+                </div>
+                <div class="form-group">
+                    <label for="apartment_number" class="block text-sm font-medium text-gray-700">Apartment Number:</label>
+                    <input type="text" id="apartment_number" name="apartment_number" placeholder="Apartment Number" required class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-opacity-50">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="check_in_date" class="block text-sm font-medium text-gray-700">Move-in Date:</label>
+                        <input type="date" id="check_in_date" name="check_in_date" required class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-opacity-50">
+                    </div>
+                    <div class="form-group">
+                        <label for="check_out_date" class="block text-sm font-medium text-gray-700">Move-out Date:</label>
+                        <input type="date" id="check_out_date" name="check_out_date" class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-opacity-50">
+                    </div>
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit" class="py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-opacity-50">Add Tenant</button>
+                </div>
+            </form>
+        </div>
+
+    <!-- Tenant List -->
+    <div class="tenant-list bg-white p-6 rounded-md shadow-md">
+        <h2 class="text-xl font-semibold mb-4">Current Tenants</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2">Tenant ID</th>
+                        <th class="px-4 py-2">Name</th>
+                        <th class="px-4 py-2">Phone</th>
+                        <th class="px-4 py-2">Email</th>
+                        <th class="px-4 py-2">Apt Number</th>
+                        <th class="px-4 py-2">Move-in Date</th>
+                        <th class="px-4 py-2">Move-out Date</th>
+                        <th class="px-4 py-2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tenant in tenants %}
+                    <tr>
+                        <td class="px-4 py-2">{{ tenant.tenant_id }}</td>
+                        <td class="px-4 py-2">{{ tenant.name }}</td>
+                        <td class="px-4 py-2">{{ tenant.phone_number }}</td>
+                        <td class="px-4 py-2">{{ tenant.email }}</td>
+                        <td class="px-4 py-2" id="apartment_number_{{ tenant.tenant_id }}">{{ tenant.apartment_number }}</td>
+                        <td class="px-4 py-2">{{ tenant.check_in_date }}</td>
+                        <td class="px-4 py-2">{{ tenant.check_out_date }}</td>
+                        <td class="px-4 py-2">
+                            <!-- Form to Move Tenant -->
+                            <form action="{{ url_for('move_tenant', tenant_id=tenant.tenant_id) }}" method="post" id="move_tenant_form_{{ tenant.tenant_id }}">
+                                <input type="hidden" name="new_apartment_number" id="new_apartment_number_{{ tenant.tenant_id }}" placeholder="New Apartment Number">
+                                <button type="button" onclick="moveTenant('{{ tenant.tenant_id }}')">Move</button>
+                            </form>
+                            <!-- Form to Delete Tenant -->
+                            <form action="{{ url_for('delete_tenant', tenant_id=tenant.tenant_id) }}" method="post">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="delete-tenant-button">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </main>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
